@@ -220,6 +220,10 @@ body {
   text-decoration: line-through;
 }
 
+.completed {
+  text-decoration: line-through;
+}
+
 .todo-list li .destroy {
   display: none;
   position: absolute;
