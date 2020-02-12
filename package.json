@@ -1,6 +1,5 @@
 {
   "name": "todos",
-  "homepage": "https://knegley.gitlab.io/todo-part-2",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
