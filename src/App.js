@@ -1,7 +1,6 @@
 import React, { useReducer, useRef } from "react";
 import "./index.css";
 // import todosList from "./todos.json";
-import { BrowserRouter } from "react-router-dom";
 
 const App = () => {
   // let toDos = { todosList }.todosList;
@@ -68,10 +67,12 @@ const App = () => {
   // };
 
   return (
-    <BrowserRouter>
-      <React.Fragment>
-        <main>
+    <React.Fragment>
+      <section className="todoapp">
+        <header className="header">
+          <h1 className="header">todos</h1>
           <input
+            className="new-todo"
             type="text"
             placeholder=" type to do"
             // onKeyDown={() => dispatch({ type: "add" })}
@@ -79,35 +80,37 @@ const App = () => {
             autoFocus
             ref={toDoRef}
           ></input>
-          <input
-            type="button"
-            value="delete completed"
-            onClick={() => dispatch({ type: "deleteComplete" })}
-          ></input>
-          {toDo.map((item, index) => {
-            return (
-              <div
-                key={item.id}
-                // style={
-                //   toDo[index].completed && { textDecorationLine: "line-through" }
-                className={toDo[index].completed ? "completed" : null}
-              >
-                {toDo[index].title}
-                <input
-                  type="button"
-                  value="Delete"
-                  onClick={() => dispatch({ type: "delete", index })}
-                ></input>
-                <input
-                  type="checkbox"
-                  onClick={() => dispatch({ type: "markComplete", index })}
-                ></input>
-              </div>
-            );
-          })}
-        </main>
-        <footer>
-          <span>
+        </header>
+
+        {toDo.map((item, index) => {
+          return (
+            <section className="main">
+              <ul className="todo-list">
+                <li
+                  key={item.id}
+                  // style={
+                  //   toDo[index].completed && { textDecorationLine: "line-through" }
+                  className={toDo[index].completed ? "completed" : null}
+                >
+                  <div className="view">
+                    <input
+                      type="checkbox"
+                      className="toggle"
+                      onClick={() => dispatch({ type: "markComplete", index })}
+                    ></input>
+                    <label>{toDo[index].title}</label>
+                    <button
+                      className="destroy"
+                      onClick={() => dispatch({ type: "delete", index })}
+                    ></button>
+                  </div>
+                </li>
+              </ul>
+            </section>
+          );
+        })}
+        <footer className="footer">
+          <span className="todo-count">
             <strong>
               {toDo.reduce((total, current) => {
                 if (!current.completed) {
@@ -118,9 +121,15 @@ const App = () => {
             </strong>{" "}
             item(s) left
           </span>
+          <button
+            className="clear-completed"
+            onClick={() => dispatch({ type: "deleteComplete" })}
+          >
+            Delete Completed
+          </button>
         </footer>
-      </React.Fragment>
-    </BrowserRouter>
+      </section>
+    </React.Fragment>
   );
 };
 
