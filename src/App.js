@@ -1,6 +1,7 @@
 import React, { useReducer, useRef } from "react";
 import "./index.css";
 // import todosList from "./todos.json";
+import { BrowserRouter } from "react-router-dom";
 
 const App = () => {
   // let toDos = { todosList }.todosList;
@@ -67,42 +68,59 @@ const App = () => {
   // };
 
   return (
-    <React.Fragment>
-      <input
-        type="text"
-        placeholder=" type to do"
-        autoFocus
-        // onKeyDown={() => dispatch({ type: "add" })}
-        onKeyDown={keyDownHandler}
-        ref={toDoRef}
-      ></input>
-      <input
-        type="button"
-        value="delete completed"
-        onClick={() => dispatch({ type: "deleteComplete" })}
-      ></input>
-      {toDo.map((item, index) => {
-        return (
-          <div
-            key={item.id}
-            // style={
-            //   toDo[index].completed && { textDecorationLine: "line-through" }
-            className={toDo[index].completed ? "completed" : null}
-          >
-            {toDo[index].title}
-            <input
-              type="button"
-              value="Delete"
-              onClick={() => dispatch({ type: "delete", index })}
-            ></input>
-            <input
-              type="checkbox"
-              onClick={() => dispatch({ type: "markComplete", index })}
-            ></input>
-          </div>
-        );
-      })}
-    </React.Fragment>
+    <BrowserRouter>
+      <React.Fragment>
+        <main>
+          <input
+            type="text"
+            placeholder=" type to do"
+            // onKeyDown={() => dispatch({ type: "add" })}
+            onKeyDown={keyDownHandler}
+            autoFocus
+            ref={toDoRef}
+          ></input>
+          <input
+            type="button"
+            value="delete completed"
+            onClick={() => dispatch({ type: "deleteComplete" })}
+          ></input>
+          {toDo.map((item, index) => {
+            return (
+              <div
+                key={item.id}
+                // style={
+                //   toDo[index].completed && { textDecorationLine: "line-through" }
+                className={toDo[index].completed ? "completed" : null}
+              >
+                {toDo[index].title}
+                <input
+                  type="button"
+                  value="Delete"
+                  onClick={() => dispatch({ type: "delete", index })}
+                ></input>
+                <input
+                  type="checkbox"
+                  onClick={() => dispatch({ type: "markComplete", index })}
+                ></input>
+              </div>
+            );
+          })}
+        </main>
+        <footer>
+          <span>
+            <strong>
+              {toDo.reduce((total, current) => {
+                if (!current.completed) {
+                  total += 1;
+                }
+                return total;
+              }, 0)}
+            </strong>{" "}
+            item(s) left
+          </span>
+        </footer>
+      </React.Fragment>
+    </BrowserRouter>
   );
 };
 
