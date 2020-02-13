@@ -1,6 +1,8 @@
-import React, { useReducer, useRef } from "react";
+import React, { useReducer, useRef, useContext } from "react";
 import "./index.css";
 // import todosList from "./todos.json";
+
+const DispatchContext = React.createContext(null);
 
 const App = () => {
   // let toDos = { todosList }.todosList;
@@ -68,69 +70,122 @@ const App = () => {
 
   return (
     <React.Fragment>
-      <section className="todoapp">
-        <header className="header">
-          <h1 className="header">todos</h1>
-          <input
-            className="new-todo"
-            type="text"
-            placeholder=" type to do"
-            // onKeyDown={() => dispatch({ type: "add" })}
-            onKeyDown={keyDownHandler}
-            autoFocus
-            ref={toDoRef}
-          ></input>
-        </header>
-
-        {toDo.map((item, index) => {
-          return (
-            <section className="main">
-              <ul className="todo-list">
-                <li
-                  key={item.id}
-                  // style={
-                  //   toDo[index].completed && { textDecorationLine: "line-through" }
-                  className={toDo[index].completed ? "completed" : null}
-                >
-                  <div className="view">
-                    <input
-                      type="checkbox"
-                      className="toggle"
-                      onClick={() => dispatch({ type: "markComplete", index })}
-                    ></input>
-                    <label>{toDo[index].title}</label>
-                    <button
-                      className="destroy"
-                      onClick={() => dispatch({ type: "delete", index })}
-                    ></button>
-                  </div>
-                </li>
-              </ul>
-            </section>
-          );
-        })}
-        <footer className="footer">
-          <span className="todo-count">
-            <strong>
-              {toDo.reduce((total, current) => {
-                if (!current.completed) {
-                  total += 1;
-                }
-                return total;
-              }, 0)}
-            </strong>{" "}
-            item(s) left
-          </span>
-          <button
-            className="clear-completed"
-            onClick={() => dispatch({ type: "deleteComplete" })}
-          >
-            Delete Completed
-          </button>
-        </footer>
-      </section>
+      <DispatchContext.Provider value={dispatch}>
+        <section className="todoapp">
+          <Header ref={toDoRef} onKeyDown={keyDownHandler} />
+          {/* <header className="header">
+            <h1 className="header">todos</h1>
+            <input
+              className="new-todo"
+              type="text"
+              placeholder=" type to do"
+              // onKeyDown={() => dispatch({ type: "add" })}
+              onKeyDown={keyDownHandler}
+              autoFocus
+              ref={toDoRef}
+            ></input>
+          </header> */}
+          <ToDoList toDo={toDo} />
+          <Footer toDo={toDo} />
+          {/* <footer className="footer">
+            <span className="todo-count">
+              <strong>
+                {toDo.reduce((total, current) => {
+                  if (!current.completed) {
+                    total += 1;
+                  }
+                  return total;
+                }, 0)}
+              </strong>{" "}
+              item(s) left
+            </span>
+            <button
+              className="clear-completed"
+              onClick={() => dispatch({ type: "deleteComplete" })}
+            >
+              Delete Completed
+            </button>
+          </footer> */}
+        </section>
+      </DispatchContext.Provider>
     </React.Fragment>
   );
 };
 
 export default App;
+
+const ToDoList = ({ toDo }) => {
+  const dispatch = useContext(DispatchContext);
+  return toDo.map((item, index) => {
+    return (
+      <section className="main">
+        <ul className="todo-list">
+          <li
+            // style={
+            //   toDo[index].completed && { textDecorationLine: "line-through" }
+            key={item.id}
+            className={toDo[index].completed ? "completed" : null}
+          >
+            <div className="view">
+              <input
+                type="checkbox"
+                className="toggle"
+                onClick={() => dispatch({ type: "markComplete", index })}
+              ></input>
+              <label>{toDo[index].title}</label>
+              <button
+                className="destroy"
+                onClick={() => dispatch({ type: "delete", index })}
+              ></button>
+            </div>
+          </li>
+        </ul>{" "}
+      </section>
+    );
+  });
+};
+
+const Footer = ({ toDo }) => {
+  const dispatch = useContext(DispatchContext);
+  return (
+    <React.Fragment>
+      <footer className="footer">
+        <span className="todo-count">
+          <strong>
+            {toDo.reduce((total, current) => {
+              if (!current.completed) {
+                total += 1;
+              }
+              return total;
+            }, 0)}
+          </strong>{" "}
+          item(s) left
+        </span>
+        <button
+          className="clear-completed"
+          onClick={() => dispatch({ type: "deleteComplete" })}
+        >
+          Delete Completed
+        </button>
+      </footer>
+    </React.Fragment>
+  );
+};
+
+const Header = ({ ref }, { onKeyDown }) => {
+  return (
+    <React.Fragment>
+      <header className="header">
+        <h1 className="header">todos</h1>
+        <input
+          className="new-todo"
+          type="text"
+          placeholder=" type to do"
+          onKeyDown={onKeyDown}
+          autoFocus
+          ref={ref}
+        ></input>
+      </header>
+    </React.Fragment>
+  );
+};
