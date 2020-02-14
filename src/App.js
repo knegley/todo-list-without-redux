@@ -1,10 +1,30 @@
-import React, { useReducer, useRef, useContext } from "react";
+import React, { useReducer, useRef } from "react";
+import ToDoList from "./ToDoList";
+import Footer from "./Footer";
 import "./index.css";
+import {
+  BrowserRouter as Router,
+  // NavLink,
+  Route
+  // useRouteMatch
+} from "react-router-dom";
 // import todosList from "./todos.json";
 
-const DispatchContext = React.createContext(null);
+export const DispatchContext = React.createContext(null);
+// let FowardTodoRef = React.forwardRef((props, ref) => {
+//   return (
+//     <input
+//       className="new-todo"
+//       type="text"
+//       placeholder=" type to do"
+//       onKeyDown={props.onKeyDown}
+//       autoFocus
+//       ref={ref}
+//     ></input>
+//   );
+// });
 
-const App = () => {
+export const App = () => {
   // let toDos = { todosList }.todosList;
   // console.log(toDos);
   // console.log(toDos[0]);
@@ -32,7 +52,8 @@ const App = () => {
         return state.filter((value, index) => index !== action.index);
 
       case "markComplete":
-        state[action.index].completed = !state[action.index].completed;
+        action.item.completed = action.item.completed ? false : true;
+
         return [...state];
 
       case "deleteComplete":
@@ -55,6 +76,11 @@ const App = () => {
     }
   };
 
+  ///******* */
+
+  // let homeMatch = useRouteMatch({ path: "/", exact: true });
+  // let activeMatch = useRouteMatch({ path: "/active", exact: true });
+
   // const handleDelete = event => {
   //   console.log(event.target);
   //   console.log(event.target.id);
@@ -69,123 +95,188 @@ const App = () => {
   // };
 
   return (
-    <React.Fragment>
-      <DispatchContext.Provider value={dispatch}>
-        <section className="todoapp">
-          <Header ref={toDoRef} onKeyDown={keyDownHandler} />
-          {/* <header className="header">
-            <h1 className="header">todos</h1>
-            <input
-              className="new-todo"
-              type="text"
-              placeholder=" type to do"
-              // onKeyDown={() => dispatch({ type: "add" })}
-              onKeyDown={keyDownHandler}
-              autoFocus
-              ref={toDoRef}
-            ></input>
-          </header> */}
-          <ToDoList toDo={toDo} />
-          <Footer toDo={toDo} />
-          {/* <footer className="footer">
-            <span className="todo-count">
-              <strong>
-                {toDo.reduce((total, current) => {
-                  if (!current.completed) {
-                    total += 1;
-                  }
-                  return total;
-                }, 0)}
-              </strong>{" "}
-              item(s) left
-            </span>
-            <button
-              className="clear-completed"
-              onClick={() => dispatch({ type: "deleteComplete" })}
-            >
-              Delete Completed
-            </button>
-          </footer> */}
-        </section>
-      </DispatchContext.Provider>
-    </React.Fragment>
+    <Router>
+      <React.Fragment>
+        <DispatchContext.Provider value={dispatch}>
+          <section className="todoapp">
+            {/* <Header ref={toDoRef} onKeyDown={keyDownHandler} /> */}
+            <header className="header">
+              <h1 className="header">todos</h1>
+              <input
+                className="new-todo"
+                type="text"
+                placeholder=" type to do"
+                // onKeyDown={() => dispatch({ type: "add" })}
+                onKeyDown={keyDownHandler}
+                autoFocus
+                ref={toDoRef}
+              ></input>
+            </header>
+
+            {/* /////////////////////////////////////////////////////////////////////////////////////////// */}
+            <Route exact path="/">
+              <ToDoList toDo={toDo} />
+            </Route>
+            <Route
+              exact
+              path="/active"
+              render={() => (
+                <ToDoList
+                  toDo={toDo.filter(value => value.completed === false)}
+                />
+              )}
+            ></Route>
+            <Route
+              exact
+              path="/completed"
+              render={() => (
+                <ToDoList
+                  toDo={toDo.filter(value => value.completed === true)}
+                />
+              )}
+            ></Route>
+
+            {/* ///////////////////////////////////////////////////////////////////////////*} */}
+
+            {/* tried using a hook but no luck =( for use match instead of route */}
+            {/* {homeMatch && <ToDoList toDo={toDo} />}
+
+            {activeMatch && (
+              <ToDoList
+                toDo={toDo.filter(value => value.completed === false)}
+                
+              />
+            )} */}
+
+            {/* <ToDoList toDo={toDo} /> */}
+
+            <Footer toDo={toDo} />
+          </section>
+        </DispatchContext.Provider>
+      </React.Fragment>
+    </Router>
   );
 };
 
 export default App;
 
-const ToDoList = ({ toDo }) => {
-  const dispatch = useContext(DispatchContext);
-  return toDo.map((item, index) => {
-    return (
-      <section className="main">
-        <ul className="todo-list">
-          <li
-            // style={
-            //   toDo[index].completed && { textDecorationLine: "line-through" }
-            key={item.id}
-            className={toDo[index].completed ? "completed" : null}
-          >
-            <div className="view">
-              <input
-                type="checkbox"
-                className="toggle"
-                onClick={() => dispatch({ type: "markComplete", index })}
-              ></input>
-              <label>{toDo[index].title}</label>
-              <button
-                className="destroy"
-                onClick={() => dispatch({ type: "delete", index })}
-              ></button>
-            </div>
-          </li>
-        </ul>{" "}
-      </section>
-    );
-  });
-};
+// const ToDoList = ({ toDo }) => {
+//   const dispatch = useContext(DispatchContext);
+//   return toDo.map((item, index) => {
+//     return (
+//       <section className="main" key={item.id}>
+//         <ul className="todo-list">
+//           <li
+//             // style={
+//             //   toDo[index].completed && { textDecorationLine: "line-through" }
 
-const Footer = ({ toDo }) => {
-  const dispatch = useContext(DispatchContext);
-  return (
-    <React.Fragment>
-      <footer className="footer">
-        <span className="todo-count">
-          <strong>
-            {toDo.reduce((total, current) => {
-              if (!current.completed) {
-                total += 1;
-              }
-              return total;
-            }, 0)}
-          </strong>{" "}
-          item(s) left
-        </span>
-        <button
-          className="clear-completed"
-          onClick={() => dispatch({ type: "deleteComplete" })}
-        >
-          Delete Completed
-        </button>
-      </footer>
-    </React.Fragment>
-  );
-};
+//             className={toDo[index].completed ? "completed" : null}
+//           >
+//             <div className="view">
+//               <input
+//                 type="checkbox"
+//                 className="toggle"
+//                 onClick={() => dispatch({ type: "markComplete", index, item })}
+//               ></input>
+//               <label>{toDo[index].title}</label>
+//               <button
+//                 className="destroy"
+//                 onClick={() => dispatch({ type: "delete", index, item })}
+//               ></button>
+//             </div>
+//           </li>
+//         </ul>{" "}
+//       </section>
+//     );
+//   });
+// };
 
-const Header = ({ ref }, { onKeyDown }) => {
-  return (
-    <React.Fragment>
-      <header className="header">
-        <h1 className="header">todos</h1>
-        <input
-          className="new-todo"
-          type="text"
-          placeholder=" type to do"
-          onKeyDown={onKeyDown}
-          autoFocus
-          ref={ref}
-        ></input>
-      </header>
-    </React.Fragment>
-  );
-};
+// // const ActiveList = ({ toDo }) => {
+// //   const dispatch = useContext(DispatchContext);
+// //   return toDo.reduce((acc, item, index) => {
+// //     if (!item.completed) {
+// //       acc.push(item.completetd);
+// //       return (
+// //         <section className="main">
+// //           <ul className="todo-list">
+// //             <li
+// //               // style={
+// //               //   toDo[index].completed && { textDecorationLine: "line-through" }
+// //               key={item.id}
+// //               className={item.completed ? "completed" : null}
+// //             >
+// //               <div className="view">
+// //                 <input
+// //                   type="checkbox"
+// //                   className="toggle"
+// //                   onClick={() => dispatch({ type: "markComplete", index })}
+// //                 ></input>
+// //                 <label>{item.title}</label>
+// //                 <button
+// //                   className="destroy"
+// //                   onClick={() => dispatch({ type: "delete", index })}
+// //                 ></button>
+// //               </div>
+// //             </li>
+// //           </ul>{" "}
+// //         </section>
+// //       );
+// //     }
+// //     return acc;
+// //   }, []);
+// // };
+
+// const Footer = ({ toDo }) => {
+//   const dispatch = useContext(DispatchContext);
+//   return (
+//     <React.Fragment>
+//       <footer className="footer">
+//         <span className="todo-count">
+//           <strong>
+//             {toDo.reduce((total, current) => {
+//               if (!current.completed) {
+//                 total += 1;
+//               }
+//               return total;
+//             }, 0)}
+//           </strong>{" "}
+//           item(s) left
+//         </span>
+//         <ul className="filters">
+//           <li>
+//             <NavLink exact to="/" activeClassName="selected">
+//               All
+//             </NavLink>
+//           </li>
+//           <li>
+//             <NavLink to="/active" activeClassName="selected">
+//               Active
+//             </NavLink>
+//           </li>
+//           <li>
+//             <NavLink to="/completed" activeClassName="selected">
+//               Completed
+//             </NavLink>
+//           </li>
+//         </ul>
+//         <button
+//           className="clear-completed"
+//           onClick={() => dispatch({ type: "deleteComplete" })}
+//         >
+//           Delete Completed
+//         </button>
+//       </footer>
+//     </React.Fragment>
+//   );
+// };
+
+// const Header = () => {
+//   return (
+//     <React.Fragment>
+//       <header className="header">
+//         <h1 className="header">todos</h1>
+//         <FowardTodoRef />
+//       </header>
+//     </React.Fragment>
+//   );
+// };
