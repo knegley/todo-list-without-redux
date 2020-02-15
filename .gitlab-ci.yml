@@ -1,13 +1,15 @@
 image: node:alpine
 pages:
   stage: deploy
+  variables:
+  PUBLIC_URL: "/your-project-name" # slash is important
   script:
-  - npm install
-  - npm run build
-  - rm -rf public
-  - mv build public
+    - npm install
+    - npm run build
+    - rm -rf public
+    - mv build public
   artifacts:
     paths:
-    - public
+      - public
   only:
-  - master
+    - master

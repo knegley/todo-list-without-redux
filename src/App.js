@@ -117,7 +117,8 @@ const App = () => {
   // };
 
   return (
-    <Router>
+    <Router basename={process.env.PUBLIC_URL}>
+      >
       <React.Fragment>
         <DispatchContext.Provider value={dispatch}>
           <SetListContext.Provider value={setListText}>
