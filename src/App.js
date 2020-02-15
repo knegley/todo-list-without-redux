@@ -1,4 +1,4 @@
-import React, { useReducer, useRef } from "react";
+import React, { useReducer, useRef, useState } from "react";
 import ToDoList from "./ToDoList";
 import Footer from "./Footer";
 import "./index.css";
@@ -8,9 +8,12 @@ import {
   Route
   // useRouteMatch
 } from "react-router-dom";
+import Header from "./Header";
+
 // import todosList from "./todos.json";
 
 export const DispatchContext = React.createContext(null);
+export const SetListContext = React.createContext(null);
 // let FowardTodoRef = React.forwardRef((props, ref) => {
 //   return (
 //     <input
@@ -24,7 +27,7 @@ export const DispatchContext = React.createContext(null);
 //   );
 // });
 
-export const App = () => {
+const App = () => {
   // let toDos = { todosList }.todosList;
   // console.log(toDos);
   // console.log(toDos[0]);
@@ -32,13 +35,27 @@ export const App = () => {
 
   const toDoRef = useRef();
 
+  const [listText, setListText] = useState("");
+
+  // const keyDownHandler = event => {
+  //   if (event.key === "Enter") {
+  //     console.log("entered");
+  //     // console.log(event.target.value);
+  //     // console.log(toDoRef.current.value);
+
+  //     // console.log(toDo);
+  //     setListText(event.target.value);
+  //     dispatch({ type: "add" });
+  //   }
+  // };
+
   const [toDo, dispatch] = useReducer((state, action) => {
     switch (action.type) {
       case "add":
         const addedToDo = {
           userId: 1,
           id: Math.floor(Math.random() * 100000),
-          title: toDoRef.current.value,
+          title: listText,
           completed: false
         };
         console.log(toDoRef.current);
@@ -52,9 +69,14 @@ export const App = () => {
         return state.filter((value, index) => index !== action.index);
 
       case "markComplete":
-        action.item.completed = action.item.completed ? false : true;
+        // action.item.completed = action.item.completed ? false : true;
 
-        return [...state];
+        return state.map(value => {
+          if (value.id !== action.item.id) {
+            return value;
+          }
+          return { ...value, completed: !value.completed };
+        });
 
       case "deleteComplete":
         return state.filter(value => value.completed === false);
@@ -64,17 +86,17 @@ export const App = () => {
     }
   }, []);
 
-  const keyDownHandler = event => {
-    if (event.key === "Enter") {
-      console.log("entered");
-      console.log(event.target.value);
-      console.log(toDoRef.current.value);
+  // const keyDownHandler = event => {
+  //   if (event.key === "Enter") {
+  //     console.log("entered");
+  //     console.log(event.target.value);
+  //     console.log(toDoRef.current.value);
 
-      console.log(toDo);
+  //     console.log(toDo);
 
-      dispatch({ type: "add" });
-    }
-  };
+  //     dispatch({ type: "add" });
+  //   }
+  // };
 
   ///******* */
 
@@ -98,9 +120,10 @@ export const App = () => {
     <Router>
       <React.Fragment>
         <DispatchContext.Provider value={dispatch}>
-          <section className="todoapp">
-            {/* <Header ref={toDoRef} onKeyDown={keyDownHandler} /> */}
-            <header className="header">
+          <SetListContext.Provider value={setListText}>
+            <section className="todoapp">
+              <Header />
+              {/* <header className="header">
               <h1 className="header">todos</h1>
               <input
                 className="new-todo"
@@ -111,35 +134,33 @@ export const App = () => {
                 autoFocus
                 ref={toDoRef}
               ></input>
-            </header>
+            </header> */}
+              {/* /////////////////////////////////////////////////////////////////////////////////////////// */}
 
-            {/* /////////////////////////////////////////////////////////////////////////////////////////// */}
-            <Route exact path="/">
-              <ToDoList toDo={toDo} />
-            </Route>
-            <Route
-              exact
-              path="/active"
-              render={() => (
-                <ToDoList
-                  toDo={toDo.filter(value => value.completed === false)}
-                />
-              )}
-            ></Route>
-            <Route
-              exact
-              path="/completed"
-              render={() => (
-                <ToDoList
-                  toDo={toDo.filter(value => value.completed === true)}
-                />
-              )}
-            ></Route>
-
-            {/* ///////////////////////////////////////////////////////////////////////////*} */}
-
-            {/* tried using a hook but no luck =( for use match instead of route */}
-            {/* {homeMatch && <ToDoList toDo={toDo} />}
+              <Route exact path="/">
+                <ToDoList toDo={toDo} />
+              </Route>
+              <Route
+                exact
+                path="/active"
+                render={() => (
+                  <ToDoList
+                    toDo={toDo.filter(value => value.completed === false)}
+                  />
+                )}
+              ></Route>
+              <Route
+                exact
+                path="/completed"
+                render={() => (
+                  <ToDoList
+                    toDo={toDo.filter(value => value.completed === true)}
+                  />
+                )}
+              ></Route>
+              {/* ///////////////////////////////////////////////////////////////////////////*} */}
+              {/* tried using a hook but no luck =( for use match instead of route */}
+              {/* {homeMatch && <ToDoList toDo={toDo} />}
 
             {activeMatch && (
               <ToDoList
@@ -147,11 +168,10 @@ export const App = () => {
                 
               />
             )} */}
-
-            {/* <ToDoList toDo={toDo} /> */}
-
-            <Footer toDo={toDo} />
-          </section>
+              {/* <ToDoList toDo={toDo} /> */}
+              <Footer toDo={toDo} />
+            </section>
+          </SetListContext.Provider>
         </DispatchContext.Provider>
       </React.Fragment>
     </Router>
@@ -273,9 +293,18 @@ export default App;
 // const Header = () => {
 //   return (
 //     <React.Fragment>
+//       {/* <Header ref={toDoRef} onKeyDown={keyDownHandler} /> */}
 //       <header className="header">
 //         <h1 className="header">todos</h1>
-//         <FowardTodoRef />
+//         <input
+//           className="new-todo"
+//           type="text"
+//           placeholder=" type to do"
+//           // onKeyDown={() => dispatch({ type: "add" })}
+//           onKeyDown={keyDownHandler}
+//           autoFocus
+//           ref={toDoRef}
+//         ></input>
 //       </header>
 //     </React.Fragment>
 //   );
