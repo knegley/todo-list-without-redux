@@ -2,7 +2,7 @@ image: node:alpine
 pages:
   stage: deploy
   variables:
-  PUBLIC_URL: /knegley/react-assessment-todo-part-2
+  PUBLIC_URL: /react-assessment-todo-part-2
   script:
     - npm install
     - npm run build
