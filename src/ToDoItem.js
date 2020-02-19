@@ -2,7 +2,7 @@ import React from "react";
 import { withRouter, Route } from "react-router-dom";
 import ToDoList from "./ToDoList";
 
-const Routes = ({ toDo }) => {
+const TodoItem = ({ toDo }) => {
   return (
     <React.Fragment>
       <Route exact path="/">
@@ -26,4 +26,4 @@ const Routes = ({ toDo }) => {
   );
 };
 
-export default withRouter(Routes);
+export default withRouter(TodoItem);

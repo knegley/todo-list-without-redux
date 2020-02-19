@@ -9,7 +9,7 @@ import {
   // useRouteMatch
 } from "react-router-dom";
 import Header from "./Header";
-import Routes from "./Routes";
+import ToDoItem from "./ToDoItem";
 
 // import todosList from "./todos.json";
 
@@ -62,7 +62,7 @@ const App = () => {
         // console.log(toDoRef.current);
         console.log(addedToDo);
         console.log([...state, addedToDo]);
-        setListText("");
+
         return [...state, addedToDo];
 
       case "delete":
@@ -137,7 +137,7 @@ const App = () => {
               ></input>
             </header> */}
               {/* /////////////////////////////////////////////////////////////////////////////////////////// */}
-              <Routes toDo={toDo} />
+              <ToDoItem toDo={toDo} />
               {/* <Route exact path="/">
                 <ToDoList toDo={toDo} />
               </Route>
