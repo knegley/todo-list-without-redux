@@ -1,14 +1,15 @@
-import React, { useReducer, useRef, useState } from "react";
-import ToDoList from "./ToDoList";
+import React, { useReducer, useState } from "react";
+// import ToDoList from "./ToDoList";
 import Footer from "./Footer";
 import "./index.css";
 import {
-  BrowserRouter as Router,
+  BrowserRouter as Router
   // NavLink,
-  Route
+  // Route
   // useRouteMatch
 } from "react-router-dom";
 import Header from "./Header";
+import Routes from "./Routes";
 
 // import todosList from "./todos.json";
 
@@ -33,7 +34,7 @@ const App = () => {
   // console.log(toDos[0]);
   // console.log(toDos[0].completed);
 
-  const toDoRef = useRef();
+  // const toDoRef = useRef();
 
   const [listText, setListText] = useState("");
 
@@ -58,10 +59,10 @@ const App = () => {
           title: listText,
           completed: false
         };
-        console.log(toDoRef.current);
+        // console.log(toDoRef.current);
         console.log(addedToDo);
         console.log([...state, addedToDo]);
-
+        setListText("");
         return [...state, addedToDo];
 
       case "delete":
@@ -118,7 +119,6 @@ const App = () => {
 
   return (
     <Router basename={process.env.PUBLIC_URL}>
-      >
       <React.Fragment>
         <DispatchContext.Provider value={dispatch}>
           <SetListContext.Provider value={setListText}>
@@ -137,8 +137,8 @@ const App = () => {
               ></input>
             </header> */}
               {/* /////////////////////////////////////////////////////////////////////////////////////////// */}
-
-              <Route exact path="/">
+              <Routes toDo={toDo} />
+              {/* <Route exact path="/">
                 <ToDoList toDo={toDo} />
               </Route>
               <Route
@@ -158,7 +158,7 @@ const App = () => {
                     toDo={toDo.filter(value => value.completed === true)}
                   />
                 )}
-              ></Route>
+              ></Route> */}
               {/* ///////////////////////////////////////////////////////////////////////////*} */}
               {/* tried using a hook but no luck =( for use match instead of route */}
               {/* {homeMatch && <ToDoList toDo={toDo} />}

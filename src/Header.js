@@ -19,6 +19,7 @@ const Header = () => {
       // console.log(toDo);
       setListText(event.target.value);
       dispatch({ type: "add" });
+      event.target.value = "";
     }
   };
 
